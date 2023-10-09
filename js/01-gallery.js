@@ -1,6 +1,8 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 
+console.log(galleryItems);
+
 //отримуємо нашу галерею
 const galleryContainer = document.querySelector(".gallery");
 //ствворюємо розмітку
