@@ -25,6 +25,7 @@ function createMarkup(item) {
     )
     .join("");
 }
+
 //або таким чином
 // const markup = galleryItems
 //   .map(
@@ -41,21 +42,45 @@ function createMarkup(item) {
 //колбек-функція на клік
 function onImageClick(event) {
   event.preventDefault(); //заборона поведінки за замовчуванням
-  if (event.target.nodeName !== "IMG") {
+  if (!event.target.dataset.source) {
+    //або так (event.target.nodeName !== "IMG")
     return;
   } //перевірка, якщо клік не img, а на галереї, то  нічого не відбудеться
   const dataImageUrl = event.target.dataset.source; //отримуємо посилання на зобряження
   //використовуємо бібліотеку basicLightbox і створюємо новий екземпляр (модальне вікно)
   const instance = basicLightbox.create(
     `
-  		<img width="800" height="auto" src="${dataImageUrl}">
-  	`
+  		<img width="800" height="auto" src="${dataImageUrl}">`,
+    //додаємо об'єкт оцій, в яких навішуємо слухача keydown і знімаємо, коли зображення закрите
+    {
+      onShow: (instance) => {
+        document.addEventListener("keydown", onImageClose);
+      },
+
+      onClose: (instance) => {
+        document.removeEventListener("keydown", onImageClose);
+      },
+    }
   );
   instance.show(); //метод, що показує екземпляр
-  //слухач події натискання клавіши Escape і функція, що закриває модальне вікно при натисканні Escape
-  document.addEventListener("keydown", (event) => {
+
+  // функція, що закриває модальне вікно при натисканні Escape
+  function onImageClose(event) {
     if (event.code === "Escape") {
       instance.close(); //метод, що закриває модальне вікно
     }
-  });
+  }
 }
+
+//через reduce() ??
+// const markup = galleryItems.reduce(
+//   (acc, { preview, original, description }) => {
+//     acc += `<li class="gallery__item"><a class="gallery__link" href="${original}"><img
+//       class="gallery__image"
+//       src="${preview}"
+//       data-source="${original}"
+//       alt="${description}"/></a></li>`;
+//     return acc;
+//   },
+//   ""
+// );
